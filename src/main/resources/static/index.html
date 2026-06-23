@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚦 Distributed Rate Limiter | Vanshika</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #fff;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 50px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .header { text-align: center; margin-bottom: 40px; }
+        .header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #fff, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .badges { display: flex; gap: 10px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .status-live {
+            background: #10b981;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .pulse {
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .section { margin: 30px 0; }
+        .section h2 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        .endpoints { display: grid; gap: 15px; }
+        .endpoint {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 18px 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s, background 0.2s;
+            border-left: 4px solid #ffd700;
+        }
+        .endpoint:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .endpoint-info code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+        }
+        .endpoint-info p { margin-top: 6px; font-size: 0.9em; opacity: 0.85; }
+        .endpoint a {
+            background: #ffd700;
+            color: #333;
+            padding: 8px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9em;
+            transition: transform 0.2s;
+        }
+        .endpoint a:hover { transform: scale(1.05); }
+        .demo-box {
+            background: rgba(255, 215, 0, 0.15);
+            border: 2px dashed #ffd700;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+        .demo-box h3 { margin-bottom: 12px; }
+        .tech-stack { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tech {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0.9;
+        }
+        .footer a { color: #ffd700; text-decoration: none; font-weight: bold; }
+        .footer a:hover { text-decoration: underline; }
+        @media (max-width: 600px) {
+            .container { padding: 30px 20px; }
+            .header h1 { font-size: 2em; }
+            .endpoint { flex-direction: column; gap: 12px; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚦 Distributed Rate Limiter</h1>
+            <p>Production-grade API throttling using Token Bucket Algorithm</p>
+            <div class="status-live">
+                <span class="pulse"></span>
+                LIVE
+            </div>
+            <div class="badges">
+                <span class="badge">☕ Java 17</span>
+                <span class="badge">🍃 Spring Boot 3.2</span>
+                <span class="badge">🔴 Redis 7</span>
+                <span class="badge">🐳 Docker</span>
+                <span class="badge">☁️ Render</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📡 API Endpoints</h2>
+            <div class="endpoints">
+                <div class="endpoint">
+                    <div class="endpoint-info">
+                        <code>GET /api/v1/health</code>
+                        <p>Health check endpoint</p>
+                    </div>
+                    <a href="/api/v1/health" target="_blank">Try it →</a>
+                </div>
+                <div class="endpoint">
+                    <div class="endpoint-info">
+                        <code>GET /api/v1/test</code>
+                        <p>Rate-limited endpoint — 5 requests per 10 seconds</p>
+                    </div>
+                    <a href="/api/v1/test" target="_blank">Try it →</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-box">
+            <h3>🔥 Live Demo Challenge</h3>
+            <p>Click <strong>"Try it →"</strong> on <code>/api/v1/test</code> and refresh <strong>6 times quickly</strong>. Watch the 6th request return <strong>HTTP 429 (Too Many Requests)</strong>! 🎯</p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.85;">Wait 10 seconds → tokens refill → requests allowed again. ✨</p>
+        </div>
+
+        <div class="section">
+            <h2>🛠️ Tech Stack</h2>
+            <div class="tech-stack">
+                <span class="tech">Java 17</span>
+                <span class="tech">Spring Boot 3.2</span>
+                <span class="tech">Spring AOP</span>
+                <span class="tech">Redis 7 (Upstash)</span>
+                <span class="tech">Lua Scripts</span>
+                <span class="tech">Maven</span>
+                <span class="tech">Docker</span>
+                <span class="tech">JUnit 5</span>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>⚡ How It Works</h2>
+            <p style="line-height: 1.8; opacity: 0.95;">
+                Each user gets a <strong>bucket of 5 tokens</strong>. Every API request consumes 1 token. When the bucket is empty, requests are rejected with HTTP 429. The bucket refills every 10 seconds. To make this work across multiple servers, <strong>Redis</strong> stores the bucket state with <strong>atomic Lua scripts</strong> preventing race conditions. Used by companies like Twitter, GitHub, and OpenAI. 🚀
+            </p>
+        </div>
+
+        <div class="footer">
+            <p>Built with ❤️ by <strong>Vanshika</strong></p>
+            <p style="margin-top: 8px;">B.Tech CSE • R.D. Engineering College • AKTU</p>
+            <p style="margin-top: 12px;">
+                <a href="https://github.com/Vanshikash26/Project-4" target="_blank">⭐ View on GitHub</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
