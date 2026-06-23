@@ -1,14 +1,18 @@
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 spring:
   application:
     name: distributed-rate-limiter
   data:
     redis:
-      host: localhost
-      port: 6379
-      timeout: 2000ms
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      username: ${REDIS_USERNAME:}
+      ssl:
+        enabled: ${REDIS_SSL:false}
+      timeout: 5000ms
 
 rate-limiter:
   default-capacity: 10
@@ -18,3 +22,4 @@ rate-limiter:
 logging:
   level:
     com.hbb.ratelimiter: DEBUG
+
